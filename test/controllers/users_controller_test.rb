@@ -6,8 +6,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
+    User.create! name: "John", email: "user-#{rand(1000)}@example.com", password: "1234pass"
     get users_url, as: :json
     assert_response :success
+    assert json_response[0]["created_at"] <= json_response[1]["created_at"] && json_response[1]["created_at"] <= json_response[2]["created_at"]
   end
 
   test "should create user" do
