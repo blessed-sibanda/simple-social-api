@@ -30,7 +30,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     if @user.update(user_params)
-      render :show, status: :ok, location: @user
+      render :show, status: :ok, location: @user, formats: [:json]
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -51,7 +51,7 @@ class UsersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def user_params
-    params.permit(:name, :email, :password, :password_confirmation)
+    params.permit(:name, :email, :password, :password_confirmation, :avatar)
   end
 
   def verify_user

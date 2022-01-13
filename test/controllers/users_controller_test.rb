@@ -43,6 +43,19 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "can update user avatar" do
+    test_image = Rails.root.join("test/fixtures/files/user.png")
+    file = Rack::Test::UploadedFile.new(test_image, "image/*")
+    patch user_url(@user), params: { avatar: file }, headers: auth_headers_for(@user)
+    assert_response :success
+
+    assert_not_nil @user.reload.avatar_blob
+    avatar_url = json_response["avatar"]
+    assert_not_nil avatar_url
+    assert_match root_url, avatar_url
+    assert_match %r{^http}, avatar_url
+  end
+
   test "should not update user if unauthenticated" do
     patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json
     assert_response :unauthorized

@@ -2,6 +2,7 @@ class User < ApplicationRecord
   before_validation { email&.downcase! }
 
   has_secure_password
+  has_one_attached :avatar
 
   validates :name, :email, presence: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true
