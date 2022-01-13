@@ -19,8 +19,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show user" do
-    get user_url(@user), as: :json
+    get user_url(@user), as: :json, headers: { 'Authorization': @user.token }
     assert_response :success
+  end
+
+  test "should not show user if unauthenticated" do
+    get user_url(@user), as: :json
+    assert_response :unauthorized
   end
 
   test "should update user" do
