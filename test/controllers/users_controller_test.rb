@@ -44,9 +44,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "can update user avatar" do
-    test_image = Rails.root.join("test/fixtures/files/user.png")
-    file = Rack::Test::UploadedFile.new(test_image, "image/*")
-    patch user_url(@user), params: { avatar: file }, headers: auth_headers_for(@user)
+    user_image = Rails.root.join("test/fixtures/files/user.png")
+    user_avatar = Rack::Test::UploadedFile.new(user_image, "image/*")
+    patch user_url(@user), params: { avatar: user_avatar }, headers: auth_headers_for(@user)
     assert_response :success
 
     assert_not_nil @user.reload.avatar_blob
