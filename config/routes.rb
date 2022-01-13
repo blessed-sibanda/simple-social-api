@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   root "home#index"
   post "auth/login", "auth#login"
   get "auth/profile", "auth#profile"
+  delete "auth/logout", "auth#logout"
 end

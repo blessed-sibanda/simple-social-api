@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
     auth = verify_jwt
     render_error_message auth[:error] unless auth[:user]
     @current_user = auth[:user]
+    @jwt = auth[:jwt]
   end
 
   def render_error_message(message, status = :unauthorized)
@@ -13,6 +14,10 @@ class ApplicationController < ActionController::API
 
   def current_user
     @current_user
+  end
+
+  def jwt
+    @jwt
   end
 
   private

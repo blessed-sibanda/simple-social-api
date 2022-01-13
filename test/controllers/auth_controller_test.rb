@@ -40,4 +40,12 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     get auth_profile_url, as: :json
     assert_response :unauthorized
   end
+
+  test "should revoke token when logging out" do
+    token = @user.token
+    delete auth_logout_url, headers: { 'Authorization': token }
+    get auth_profile_url, headers: { 'Authorization': token }
+    assert_response :unauthorized
+    assert_equal json_response["error"], "revoked token"
+  end
 end

@@ -7,9 +7,14 @@ module JwtAuth
     if auth_header
       begin
         token = auth_header.split("Bearer ").last
+
+        if TokenBlacklist.find_by_token token
+          return { error: "revoked token" }
+        end
+
         payload = JWT.decode token, Rails.application.credentials[:secret_key_base]
         @current_user = User.find payload.first["id"]
-        return { user: @current_user }
+        return { user: @current_user, jwt: token }
       rescue JWT::ExpiredSignature
         return { error: "expired token" }
       rescue JWT::DecodeError

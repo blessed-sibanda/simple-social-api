@@ -1,5 +1,5 @@
 class AuthController < ApplicationController
-  before_action :authenticate_user!, only: [:profile]
+  before_action :authenticate_user!, only: [:profile, :logout]
 
   def login
     user = User.find_by_email params[:email]
@@ -12,6 +12,10 @@ class AuthController < ApplicationController
 
   def profile
     @user = current_user
-    render "users/show"
+    render "users/show", formats: [:json]
+  end
+
+  def logout
+    TokenBlacklist.create! token: jwt
   end
 end
