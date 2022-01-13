@@ -25,4 +25,19 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nil json_response["access_token"]
     assert_equal json_response["error"], "Invalid email/password"
   end
+
+  test "should get authenticated user's details" do
+    get auth_profile_url, headers: auth_headers_for(@user), as: :json
+
+    assert_equal json_response["id"], @user.id
+    assert_equal json_response["name"], @user.name
+    assert_equal json_response["email"], @user.email
+    assert_equal_datetime "created_at", @user.created_at
+    assert_equal_datetime "updated_at", @user.updated_at
+  end
+
+  test "should not get authenticated user's details if unauthenticated" do
+    get auth_profile_url, as: :json
+    assert_response :unauthorized
+  end
 end

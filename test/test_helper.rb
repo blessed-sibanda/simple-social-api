@@ -20,4 +20,10 @@ class ActionDispatch::IntegrationTest
   def auth_headers_for(user)
     { 'Authorization': user.token }
   end
+
+  def assert_equal_datetime(key, datetime_with_zone)
+    json_datetime = DateTime.parse json_response[key]
+    datetime = datetime_with_zone.to_datetime
+    assert_equal json_datetime.to_i, datetime.to_i
+  end
 end
