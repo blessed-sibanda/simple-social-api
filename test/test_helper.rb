@@ -16,4 +16,8 @@ class ActionDispatch::IntegrationTest
   def json_response
     JSON.parse(response.body)
   end
+
+  def auth_headers_for(user)
+    { 'Authorization': user.token }
+  end
 end

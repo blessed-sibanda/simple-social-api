@@ -19,7 +19,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show user" do
-    get user_url(@user), as: :json, headers: { 'Authorization': @user.token }
+    get user_url(@user), as: :json, headers: auth_headers_for(@user)
     assert_response :success
   end
 
