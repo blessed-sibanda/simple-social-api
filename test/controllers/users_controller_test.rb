@@ -26,10 +26,17 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should not show user if unauthenticated" do
     get user_url(@user), as: :json
     assert_response :unauthorized
+    assert_equal json_response["error"], "authentication header missing"
   end
 
   test "should update user" do
     patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json,
+                           headers: auth_headers_for(@user)
+    assert_response :success
+  end
+
+  test "can update user details partially" do
+    patch user_url(@user), params: { name: @user.name }, as: :json,
                            headers: auth_headers_for(@user)
     assert_response :success
   end

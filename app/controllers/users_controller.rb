@@ -55,8 +55,7 @@ class UsersController < ApplicationController
   end
 
   def verify_user
-    if @user == current_user
-    else
+    unless @user == current_user
       render_error_message "not authorized", :forbidden
     end
   end
