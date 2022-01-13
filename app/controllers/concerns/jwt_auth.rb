@@ -1,19 +1,24 @@
 module JwtAuth
   protected
 
-  def authenticate_user!
+  def verify_jwt
     auth_header = request.headers["authorization"]
 
     if auth_header
-      token = auth_header.split("Bearer ").last
-      payload = JWT.decode token, Rails.application.credentials[:secret_key_base]
-      @current_user = User.find payload.first["id"]
+      begin
+        token = auth_header.split("Bearer ").last
+        payload = JWT.decode token, Rails.application.credentials[:secret_key_base]
+        @current_user = User.find payload.first["id"]
+        return { user: @current_user }
+      rescue JWT::ExpiredSignature
+        return { error: "expired token" }
+      rescue JWT::DecodeError
+        return { error: "invalid token" }
+      rescue ActiveRecord::RecordNotFound
+        return { error: "user not found" }
+      end
     else
-      render_error_message "authentication header missing"
+      return { error: "authentication header missing" }
     end
-  end
-
-  def current_user
-    @current_user
   end
 end

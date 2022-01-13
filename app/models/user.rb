@@ -7,8 +7,8 @@ class User < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true
   validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
 
-  def token
-    payload = { id: id }
+  def token(exp = 1.day.to_i)
+    payload = { id: id, exp: Time.now.to_i + exp }
     JWT.encode payload, Rails.application.credentials[:secret_key_base]
   end
 
