@@ -29,15 +29,39 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update user" do
-    patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json
+    patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json,
+                           headers: auth_headers_for(@user)
     assert_response :success
+  end
+
+  test "should not update user if unauthenticated" do
+    patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json
+    assert_response :unauthorized
+  end
+
+  test "should not update other user's profile" do
+    patch user_url(@user), params: { email: @user.email, name: @user.name, password: "secret", password_confirmation: "secret" }, as: :json,
+                           headers: auth_headers_for(users(:two))
+    assert_response :forbidden
+    assert_equal json_response["error"], "not authorized"
   end
 
   test "should destroy user" do
     assert_difference("User.count", -1) do
-      delete user_url(@user), as: :json
+      delete user_url(@user), as: :json, headers: auth_headers_for(@user)
     end
 
     assert_response :no_content
+  end
+
+  test "should not destroy user if unauthenticated" do
+    delete user_url(@user), as: :json
+    assert_response :unauthorized
+  end
+
+  test "should not destroy another user's profile" do
+    delete user_url(@user), as: :json, headers: auth_headers_for(users(:two))
+    assert_response :forbidden
+    assert_equal json_response["error"], "not authorized"
   end
 end

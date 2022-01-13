@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:show]
+  before_action :authenticate_user!, only: [:show, :update, :destroy]
   before_action :set_user, only: %i[ show update destroy ]
+  before_action :verify_user, only: [:update, :destroy]
 
   # GET /users
   # GET /users.json
@@ -51,5 +52,12 @@ class UsersController < ApplicationController
   # Only allow a list of trusted parameters through.
   def user_params
     params.permit(:name, :email, :password, :password_confirmation)
+  end
+
+  def verify_user
+    if @user == current_user
+    else
+      render_error_message "not authorized", :forbidden
+    end
   end
 end
